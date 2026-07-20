@@ -1,6 +1,6 @@
 NAME = bsq
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -g
+CFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -g -fsanitize=address
 RM = rm -f
 
 SRC = $(wildcard src/*.c)

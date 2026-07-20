@@ -6,7 +6,7 @@
 /*   By: aartyush <aartyush@student.42.prague.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 10:00:03 by aartyush          #+#    #+#             */
-/*   Updated: 2026/07/20 11:20:20 by aartyush         ###   ########.fr       */
+/*   Updated: 2026/07/20 14:44:16 by aartyush         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ int main(int argc, char **argv)
     //throw error if the map read is invalid or the file can't be opened
     // if no arguments are passed read from pipe or < stdin via redirection
     // if a single parameter is given - this will be the path to the map file, read from it
-    int     i;
-    int     fd;
-    t_map   *map;
+    int                 i;
+    int                 fd;
+    t_map               *map;
 
     if (argc == 1)
     {
@@ -68,5 +68,11 @@ int main(int argc, char **argv)
             i++;
         }
     }
+    //we have map - solve;
+    //print output;
+    write_solution(map);
+    print_result(map);
+    free_char_map(map->n_rows, map->str_map);
+
     return (0);
 }

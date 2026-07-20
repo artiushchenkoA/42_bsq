@@ -6,7 +6,7 @@
 /*   By: aartyush <aartyush@student.42.prague.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 10:00:56 by aartyush          #+#    #+#             */
-/*   Updated: 2026/07/20 11:11:47 by aartyush         ###   ########.fr       */
+/*   Updated: 2026/07/20 14:49:21 by aartyush         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ int count_lines(t_map *map)
     lines = 0;
     while (map->str_map[i])
     {
-        if (map->str_map[i] == '\n')
+        if (*(map->str_map[i]) == '\n')
             lines++;
         i++;
     }
-    if (map->str_map[i - 1] != '\n')
+    if (*(map->str_map[i - 1]) != '\n')
         lines++;
     return (lines);
 }
@@ -51,8 +51,8 @@ int validate_chars(t_map *map)
     i = 0;
     while (map->str_map[i])
     {
-        if (map->str_map[i] != map->empty && map->str_map[i] != map->obstacle
-            && map->str_map[i] != '\n')
+        if (*(map->str_map[i]) != map->empty && *(map->str_map[i]) != map->obstacle
+            && *(map->str_map[i]) != '\n')
             return (0);
         i++;
     }
@@ -75,20 +75,20 @@ int check_valid_map(t_map *map)
     if (count_lines(map) != map->n_rows)
         return (0);
     first_len = 0;
-    while (map->str_map[first_len] && map->str_map[first_len] != '\n')
+    while (map->str_map[first_len] && *(map->str_map[first_len]) != '\n')
         first_len++;
     i = 0;
     while (map->str_map[i])
     {
         len = 0;
-        while (map->str_map[i] && map->str_map[i] != '\n')
+        while (map->str_map[i] && *(map->str_map[i]) != '\n')
         {
             len++;
             i++;
         }
         if (len != first_len)
             return (0);
-        if (map->str_map[i] == '\n')
+        if (*(map->str_map[i]) == '\n')
             i++;
     }
     return (1);
@@ -132,7 +132,7 @@ t_map   *read_map(int file, char *argv)
     len = 0;
     while (rest[len])
         len++;
-    map->str_map = malloc(len + 1);
+    map->str_map = malloc(len + 1 * sizeof(char));
     if (!map->str_map)
     {
         free(content);
@@ -142,10 +142,10 @@ t_map   *read_map(int file, char *argv)
     i = 0;
     while (i < len)
     {
-        map->str_map[i] = rest[i];
+        map->str_map[i] = &rest[i];
         i++;
     }
-    map->str_map[len] = '\0';
+    *(map->str_map[len]) = '\0';
     free(content);
     return (map);
 }

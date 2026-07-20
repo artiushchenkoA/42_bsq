@@ -6,7 +6,7 @@
 /*   By: aartyush <aartyush@student.42.prague.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 10:00:38 by aartyush          #+#    #+#             */
-/*   Updated: 2026/07/20 11:13:12 by aartyush         ###   ########.fr       */
+/*   Updated: 2026/07/20 12:08:44 by aartyush         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,15 @@ void	ft_stdin(int file)
 		ft_putstr(buffer);
 		bytes_read = read(file, buffer, BUFFER_SIZE_BYTES);
 	}
+}
+
+int     ft_min(int a, int b, int c)
+{
+	int min = a;
+
+	if (b < min)
+		min = b;
+	if (c < min)
+		min = c;
+	return (min);
 }
