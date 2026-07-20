@@ -16,21 +16,13 @@ int count_lines(t_map *map)
 {
     //count the number of lines in the map, and return it
     int i;
-    int lines;
 
-    if (!map->str_map || !map->str_map[0])
+    if (!map->str_map)
         return (0);
     i = 0;
-    lines = 0;
     while (map->str_map[i])
-    {
-        if (*(map->str_map[i]) == '\n')
-            lines++;
         i++;
-    }
-    if (*(map->str_map[i - 1]) != '\n')
-        lines++;
-    return (lines);
+    return (i);
 }
 
 int validate_chars(t_map *map)
@@ -38,6 +30,7 @@ int validate_chars(t_map *map)
     //check that the map only contains the empty and obstacle characters, and that the first line contains the empty, obstacle, and full characters
     // check that passed chars are all printable and number of lines is a positive integer convertible with ft_atoi;
     int i;
+    int j;
 
     if (map->n_rows <= 0)
         return (0);
@@ -51,9 +44,14 @@ int validate_chars(t_map *map)
     i = 0;
     while (map->str_map[i])
     {
-        if (*(map->str_map[i]) != map->empty && *(map->str_map[i]) != map->obstacle
-            && *(map->str_map[i]) != '\n')
-            return (0);
+        j = 0;
+        while (map->str_map[i][j])
+        {
+            if (map->str_map[i][j] != map->empty
+                && map->str_map[i][j] != map->obstacle)
+                return (0);
+            j++;
+        }
         i++;
     }
     return (1);
@@ -68,28 +66,20 @@ int check_valid_map(t_map *map)
     //first line
     int i;
     int len;
-    int first_len;
 
     if (!validate_chars(map))
         return (0);
     if (count_lines(map) != map->n_rows)
         return (0);
-    first_len = 0;
-    while (map->str_map[first_len] && *(map->str_map[first_len]) != '\n')
-        first_len++;
     i = 0;
     while (map->str_map[i])
     {
         len = 0;
-        while (map->str_map[i] && *(map->str_map[i]) != '\n')
-        {
+        while (map->str_map[i][len])
             len++;
-            i++;
-        }
-        if (len != first_len)
+        if (len != map->n_cols)
             return (0);
-        if (*(map->str_map[i]) == '\n')
-            i++;
+        i++;
     }
     return (1);
 }
@@ -101,6 +91,9 @@ t_map   *read_map(int file, char *argv)
     char *content;
     char *rest;
     int i;
+    int j;
+    int rows;
+    int start;
     int len;
 
     content = parse_map(file, argv);
@@ -129,23 +122,58 @@ t_map   *read_map(int file, char *argv)
     map->obstacle = content[i + 1];
     map->full = content[i + 2];
     rest = content + i + 4;
-    len = 0;
-    while (rest[len])
-        len++;
-    map->str_map = malloc(len + 1 * sizeof(char));
+    rows = 0;
+    i = 0;
+    while (rest[i])
+    {
+        if (rest[i] == '\n')
+            rows++;
+        i++;
+    }
+    if (i > 0 && rest[i - 1] != '\n')
+        rows++;
+    map->str_map = malloc(sizeof(char *) * (rows + 1));
     if (!map->str_map)
     {
         free(content);
         free(map);
         return (NULL);
     }
+    rows = 0;
+    start = 0;
     i = 0;
-    while (i < len)
+    while (1)
     {
-        map->str_map[i] = &rest[i];
+        if (rest[i] == '\n' || (rest[i] == '\0' && i > start))
+        {
+            len = i - start;
+            map->str_map[rows] = malloc(len + 1);
+            if (!map->str_map[rows])
+            {
+                free_char_map(rows, map->str_map);
+                free(content);
+                free(map);
+                return (NULL);
+            }
+            j = 0;
+            while (j < len)
+            {
+                map->str_map[rows][j] = rest[start + j];
+                j++;
+            }
+            map->str_map[rows][len] = '\0';
+            if (rows == 0)
+                map->n_cols = len;
+            rows++;
+            start = i + 1;
+        }
+        if (!rest[i])
+            break ;
         i++;
     }
-    *(map->str_map[len]) = '\0';
+    map->str_map[rows] = NULL;
+    if (rows == 0)
+        map->n_cols = 0;
     free(content);
     return (map);
 }

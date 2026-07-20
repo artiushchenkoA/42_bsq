@@ -33,9 +33,14 @@ int main(int argc, char **argv)
         map = read_map(0, "stdin");
         if (!map || !check_valid_map(map))
             error();
+        else
+        {
+            write_solution(map);
+            print_result(map);
+        }
         if (map)
         {
-            free(map->str_map);
+            free_char_map(map->n_rows, map->str_map);
             free(map);
         }
     }
@@ -59,20 +64,19 @@ int main(int argc, char **argv)
                     ERROR_MAP
                     ft_putchar('\n');
                 }
+                else
+                {
+                    write_solution(map);
+                    print_result(map);
+                }
                 if (map)
                 {
-                    free(map->str_map);
+                    free_char_map(map->n_rows, map->str_map);
                     free(map);
                 }
             }
             i++;
         }
     }
-    //we have map - solve;
-    //print output;
-    write_solution(map);
-    print_result(map);
-    free_char_map(map->n_rows, map->str_map);
-
     return (0);
 }

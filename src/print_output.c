@@ -19,11 +19,14 @@ void    write_solution(t_map *map)
     int                 j;
 
     fp = find_biggest_square(map);
+    if (fp.square_size <= 0)
+        return ;
     i = fp.i_begin;
-    while (i < fp.i_end)
+    while (i <= fp.i_end)
     {
         j = fp.j_begin;
-        while (j < fp.j_end){
+        while (j <= fp.j_end)
+        {
             map->str_map[i][j] = map->full;
             j++;
         }
