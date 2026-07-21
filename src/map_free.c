@@ -1,48 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_output.c                                     :+:      :+:    :+:   */
+/*   map_free.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aartyush <aartyush@student.42.prague.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/20 11:25:22 by aartyush          #+#    #+#             */
+/*   Created: 2026/07/21 12:45:00 by aartyush          #+#    #+#             */
 /*   Updated: 2026/07/21 12:45:00 by aartyush         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft.h"
 
-void	write_solution(t_map *map)
-{
-	t_found_position	fp;
-	int					i;
-	int					j;
-
-	fp = find_biggest_square(map);
-	if (fp.square_size <= 0)
-		return ;
-	i = fp.i_begin;
-	while (i <= fp.i_end)
-	{
-		j = fp.j_begin;
-		while (j <= fp.j_end)
-		{
-			map->str_map[i][j] = map->full;
-			j++;
-		}
-		i++;
-	}
-}
-
-void	print_result(t_map *map)
+void	free_map(int row, int **map)
 {
 	int	i;
 
 	i = 0;
-	while (i < map->n_rows)
+	while (i < row)
 	{
-		ft_putstr(map->str_map[i]);
-		ft_putchar('\n');
+		free(map[i]);
 		i++;
 	}
+	free(map);
+}
+
+void	free_char_map(char **map)
+{
+	int	i;
+
+	i = 0;
+	while (map[i])
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
 }
