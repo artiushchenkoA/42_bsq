@@ -6,17 +6,17 @@
 /*   By: aartyush <aartyush@student.42.prague.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 10:01:37 by aartyush          #+#    #+#             */
-/*   Updated: 2026/07/21 12:45:00 by aartyush         ###   ########.fr       */
+/*   Updated: 2026/07/21 13:03:51 by aartyush         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_BSQ_H
-#define FT_BSQ_H
+#ifndef FT_H
+# define FT_H
 
-#include <unistd.h>
-#include <stdlib.h>
+# include <unistd.h>
+# include <stdlib.h>
 
-#define BUFFER_SIZE_BYTES 32768
+# define BUFFER_SIZE_BYTES 32768
 
 typedef struct s_map
 {
