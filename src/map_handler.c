@@ -84,11 +84,13 @@ int check_valid_map(t_map *map)
     return (1);
 }
 
-t_map   *read_map(int file, char *argv)
+t_map   *read_map(char **cursor, char *argv)
 {
-   //get the parsed map, and return a t_map struct with the number of rows, empty, obstacle, and full characters, and the string representation of the map
+   //consume one map's worth of lines from *cursor (a buffer that may hold several
+   //concatenated maps), advance *cursor past it, and return a t_map struct with the
+   //number of rows, empty, obstacle, and full characters, and the string representation of the map
     t_map *map;
-    char *content;
+    char *header;
     char *rest;
     int i;
     int j;
@@ -96,85 +98,62 @@ t_map   *read_map(int file, char *argv)
     int start;
     int len;
 
-    content = parse_map(file, argv);
-    if (!content || !content[0])
-    {
-        free(content);
-        return (NULL);
-    }
+    (void)argv;
+    header = *cursor;
     i = 0;
-    while (content[i] >= '0' && content[i] <= '9')
+    while (header[i] >= '0' && header[i] <= '9')
         i++;
-    if (i == 0 || content[i] == '\0' || content[i + 1] == '\0'
-        || content[i + 2] == '\0' || content[i + 3] != '\n')
-    {
-        free(content);
+    if (i == 0 || header[i] == '\0' || header[i + 1] == '\0'
+        || header[i + 2] == '\0' || header[i + 3] != '\n')
         return (NULL);
-    }
     map = malloc(sizeof(t_map));
     if (!map)
-    {
-        free(content);
         return (NULL);
-    }
-    map->n_rows = ft_atoi(content);
-    map->empty = content[i];
-    map->obstacle = content[i + 1];
-    map->full = content[i + 2];
-    rest = content + i + 4;
-    rows = 0;
-    i = 0;
-    while (rest[i])
-    {
-        if (rest[i] == '\n')
-            rows++;
-        i++;
-    }
-    if (i > 0 && rest[i - 1] != '\n')
-        rows++;
-    map->str_map = malloc(sizeof(char *) * (rows + 1));
+    map->n_rows = ft_atoi(header);
+    map->empty = header[i];
+    map->obstacle = header[i + 1];
+    map->full = header[i + 2];
+    rest = header + i + 4;
+    map->str_map = malloc(sizeof(char *) * (map->n_rows + 1));
     if (!map->str_map)
     {
-        free(content);
         free(map);
         return (NULL);
     }
     rows = 0;
     start = 0;
-    i = 0;
-    while (1)
+    while (rows < map->n_rows && rest[start])
     {
-        if (rest[i] == '\n' || (rest[i] == '\0' && i > start))
+        i = start;
+        while (rest[i] && rest[i] != '\n')
+            i++;
+        len = i - start;
+        map->str_map[rows] = malloc(len + 1);
+        if (!map->str_map[rows])
         {
-            len = i - start;
-            map->str_map[rows] = malloc(len + 1);
-            if (!map->str_map[rows])
-            {
-                free_char_map(rows, map->str_map);
-                free(content);
-                free(map);
-                return (NULL);
-            }
-            j = 0;
-            while (j < len)
-            {
-                map->str_map[rows][j] = rest[start + j];
-                j++;
-            }
-            map->str_map[rows][len] = '\0';
-            if (rows == 0)
-                map->n_cols = len;
-            rows++;
-            start = i + 1;
+            free_char_map(rows, map->str_map);
+            free(map);
+            return (NULL);
         }
-        if (!rest[i])
-            break ;
-        i++;
+        j = 0;
+        while (j < len)
+        {
+            map->str_map[rows][j] = rest[start + j];
+            j++;
+        }
+        map->str_map[rows][len] = '\0';
+        if (rows == 0)
+            map->n_cols = len;
+        rows++;
+        if (rest[i] == '\n')
+            start = i + 1;
+        else
+            start = i;
     }
     map->str_map[rows] = NULL;
     if (rows == 0)
         map->n_cols = 0;
-    free(content);
+    *cursor = rest + start;
     return (map);
 }
 

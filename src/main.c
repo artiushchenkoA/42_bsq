@@ -27,22 +27,42 @@ int main(int argc, char **argv)
     int                 i;
     int                 fd;
     t_map               *map;
+    char                *content;
+    char                *cursor;
 
     if (argc == 1)
     {
-        map = read_map(0, "stdin");
-        if (!map || !check_valid_map(map))
+        content = parse_map(0, "stdin");
+        if (!content || !content[0])
             error();
         else
         {
-            write_solution(map);
-            print_result(map);
+            cursor = content;
+            while (*cursor)
+            {
+                map = read_map(&cursor, "stdin");
+                if (!map)
+                {
+                    error();
+                    break ;
+                }
+                else if (!check_valid_map(map))
+                {
+                    error();
+                    free_char_map(map->n_rows, map->str_map);
+                    free(map);
+                }
+                else
+                {
+                    write_solution(map);
+                    print_result(map);
+                    free_char_map(map->n_rows, map->str_map);
+                    free(map);
+                    ft_putchar('\n');
+                }
+            }
         }
-        if (map)
-        {
-            free_char_map(map->n_rows, map->str_map);
-            free(map);
-        }
+        free(content);
     }
     else
     {
@@ -57,23 +77,43 @@ int main(int argc, char **argv)
             }
             else
             {
-                map = read_map(fd, argv[i]);
+                content = parse_map(fd, argv[i]);
                 close(fd);
-                if (!map || !check_valid_map(map))
+                if (!content || !content[0])
                 {
                     ERROR_MAP
                     ft_putchar('\n');
                 }
                 else
                 {
-                    write_solution(map);
-                    print_result(map);
+                    cursor = content;
+                    while (*cursor)
+                    {
+                        map = read_map(&cursor, argv[i]);
+                        if (!map)
+                        {
+                            ERROR_MAP
+                            ft_putchar('\n');
+                            break ;
+                        }
+                        else if (!check_valid_map(map))
+                        {
+                            ERROR_MAP
+                            ft_putchar('\n');
+                            free_char_map(map->n_rows, map->str_map);
+                            free(map);
+                        }
+                        else
+                        {
+                            write_solution(map);
+                            print_result(map);
+                            free_char_map(map->n_rows, map->str_map);
+                            free(map);
+                            ft_putchar('\n');
+                        }
+                    }
                 }
-                if (map)
-                {
-                    free_char_map(map->n_rows, map->str_map);
-                    free(map);
-                }
+                free(content);
             }
             i++;
         }

@@ -44,7 +44,7 @@ void                ft_putchar(char c);
 void                ft_putstr(char *str);
 void                ft_putnbr(int nb);
 char                *parse_map(int file, char *argv);
-t_map               *read_map(int file, char *argv);
+t_map               *read_map(char **cursor, char *argv);
 int                 validate_chars(t_map *map);
 int                 check_valid_map(t_map *map);
 int                 count_lines(t_map *map);
